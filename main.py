@@ -1,5 +1,3 @@
-# HELLO
-
 import feedparser
 from fastapi import FastAPI, Query, Depends
 from fastapi.responses import JSONResponse
