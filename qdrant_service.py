@@ -63,7 +63,8 @@ def semantic_search(query: str, top_k: int = 5):
 
     results = []
     for hit in search_result:
-        # hit: ScoredPoint
+        if hit.score < 0.30:
+            continue
         results.append({
             "id": hit.id,
             "score": hit.score,

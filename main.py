@@ -138,7 +138,7 @@ def search_articles(q: str = Query(..., description="Aranacak kelime"), db: Sess
                 "source": article.source,
                 "title": article.title,
                 "link": article.link,
-                "summary": article.content,
+                "content": article.content,
                 "published": article.published.isoformat() if article.published else None
             } for article in results
         ]
