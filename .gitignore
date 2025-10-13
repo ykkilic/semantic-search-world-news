@@ -2,3 +2,4 @@
 /news.db
 /qdrant-storage
 /venv
+/.env

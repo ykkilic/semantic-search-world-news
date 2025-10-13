@@ -1,5 +1,6 @@
 import feedparser
 from fastapi import FastAPI, Query, Depends
+from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
 from sqlalchemy import func
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,13 +10,18 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 import requests
 import pytz
-from database import get_db, SessionLocal
+from database import get_db, SessionLocal, Base, engine
 from models import News
 from qdrant_service import index_news_to_qdrant, semantic_search
 
 istanbul_tz = pytz.timezone('Europe/Istanbul')
 
 app = FastAPI(title="RSS News API with SQLite")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
 RSS_FEEDS = {
     "Yahoo Finance": "https://finance.yahoo.com/news/rssindex",
