@@ -107,7 +107,7 @@ def get_all_articles(db: Session = Depends(get_db)):
                 "source": article.source,
                 "title": article.title,
                 "link": article.link,
-                "content": article.content,  # summary yerine content
+                "content": article.content,
                 "published": article.published.isoformat() if article.published else None
             } for article in articles
         ]
