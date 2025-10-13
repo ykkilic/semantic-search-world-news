@@ -9,10 +9,6 @@ SessionLocal = sessionmaker(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 def get_db():
-    """
-    Veritabanı oturumu (SessionLocal) oluşturur ve 'yield' ile sunar.
-    İstek tamamlandığında (try bloğundan çıkıldığında) oturumu kapatmayı garanti eder.
-    """
     db = SessionLocal()
     try:
         yield db  # Oturumu FastAPI'a teslim et

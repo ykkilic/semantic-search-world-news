@@ -15,10 +15,8 @@ from qdrant_service import index_news_to_qdrant, semantic_search
 
 istanbul_tz = pytz.timezone('Europe/Istanbul')
 
-# FastAPI app
 app = FastAPI(title="RSS News API with SQLite")
 
-# RSS kaynakları
 RSS_FEEDS = {
     "Yahoo Finance": "https://finance.yahoo.com/news/rssindex",
     "Hacker News": "https://news.ycombinator.com/rss",
@@ -34,8 +32,6 @@ RSS_FEEDS = {
     "Nasa" : "https://www.nasa.gov/rss/dyn/breaking_news.rss"
 }
 
-
-# Summary HTML temizleme
 def clean_summary(html_summary):
     if not html_summary:
         return ""
@@ -61,23 +57,20 @@ def fetch_and_store():
     for source, feed_url in RSS_FEEDS.items():
         parsed_feed = feedparser.parse(feed_url)
         for entry in parsed_feed.entries:
-            # Tarih parse et
             try:
                 published = dateutil.parser.parse(entry.get("published"))
             except:
                 published = None
 
-            # Tekrar eklememek için kontrol
             exists = db.query(News).filter(News.link == entry.get("link")).first()
             if not exists:
-                # RSS linkinden full content çek
                 full_content = fetch_full_article(entry.get("link"))
 
                 news_item = News(
                     source=source,
                     title=entry.get("title"),
                     link=entry.get("link"),
-                    content=full_content,  # artık content alanı dolu
+                    content=full_content,  
                     published=published,
                     created_date=istanbul_timestamp
                 )
@@ -87,7 +80,6 @@ def fetch_and_store():
 
 
 
-# Tüm haberleri sayfalı olarak getir
 @app.get("/")
 def get_all_articles(db: Session = Depends(get_db)):
     
@@ -95,7 +87,6 @@ def get_all_articles(db: Session = Depends(get_db)):
     now = datetime.now(istanbul_tz)
 
     if latest_news:
-        # Eğer DB'deki datetime naive ise tz ekle
         created = latest_news.created_date
         if created.tzinfo is None:
             created = istanbul_tz.localize(created)
@@ -105,7 +96,6 @@ def get_all_articles(db: Session = Depends(get_db)):
     if not latest_news or (now - created > timedelta(minutes=15)):
         fetch_and_store()
 
-    total_articles = db.query(func.count(News.id)).scalar()
     articles = (
         db.query(News)
         .order_by(News.published.desc())
@@ -124,7 +114,6 @@ def get_all_articles(db: Session = Depends(get_db)):
     }
 
 
-# Başlığa göre arama
 @app.get("/search")
 def search_articles(q: str = Query(..., description="Aranacak kelime"), db: Session = Depends(get_db)):
     
@@ -132,7 +121,6 @@ def search_articles(q: str = Query(..., description="Aranacak kelime"), db: Sess
     now = datetime.now(istanbul_tz)
 
     if latest_news:
-        # Eğer DB'deki datetime naive ise tz ekle
         created = latest_news.created_date
         if created.tzinfo is None:
             created = istanbul_tz.localize(created)
@@ -168,7 +156,6 @@ async def s_search(q: str = Query(..., description="Aranacak kelime"), db: Sessi
             content={"message" : "Internal Server Error"}
         )
 
-# RSS kaynaklarını listele
 @app.get("/sources")
 def list_sources():
     return {"sources": list(RSS_FEEDS.keys())}

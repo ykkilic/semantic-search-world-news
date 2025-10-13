@@ -9,7 +9,6 @@ services:
       - "6334:6334"
     volumes:
       - /Users/yigitkagankilic/Desktop/Projects/test-test-test/qdrant-storage:/qdrant/storage
-    # Konteynerin her zaman yeniden başlatılmasını sağla
     restart: unless-stopped
 
 volumes:

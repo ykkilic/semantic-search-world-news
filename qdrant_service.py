@@ -15,7 +15,6 @@ def get_embedding(text: str):
 qdrant_client = QdrantClient(host="localhost", port=6333)
 collection_name = "news_articles"
 
-# Collection yoksa oluştur
 if not qdrant_client.collection_exists(collection_name):
     qdrant_client.create_collection(
         collection_name=collection_name,
@@ -34,7 +33,7 @@ def index_news_to_qdrant():
             vector = get_embedding(article.content)
             points.append({
                 "id": article.id,
-                "vector": {"content": vector},  # <<< burada vector_name kullanımı
+                "vector": {"content": vector},  
                 "payload": {
                     "title": article.title,
                     "link": article.link,
@@ -56,7 +55,6 @@ def index_news_to_qdrant():
 def semantic_search(query: str, top_k: int = 5):
     query_vector = model.encode(query).tolist()
 
-    # Search API: vector_name ve vector belirtilmeli
     search_result = qdrant_client.search(
         collection_name=collection_name,
         query_vector=("content", query_vector), 
@@ -76,15 +74,4 @@ def semantic_search(query: str, top_k: int = 5):
             "content" : hit.payload.get("content")
         })
     return results
-
-# if __name__ == "__main__":
-#     index_news_to_qdrant()
-
-# ---------------- Test ----------------
-# if __name__ == "__main__":
-#     query = "Ukraine"
-#     results = semantic_search(query, top_k=10)
-#     for i, r in enumerate(results, 1):
-#         print(f"{i}. {r['title']} ({r['score']:.4f}) - {r['link']}")
-#         print(f"{i}. {r['content']}")
 
