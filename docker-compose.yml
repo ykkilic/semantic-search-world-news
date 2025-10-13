@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - /Users/yigitkagankilic/Desktop/Projects/test-test-test/qdrant-storage:/qdrant/storage
+    # Konteynerin her zaman yeniden başlatılmasını sağla
+    restart: unless-stopped
+
+volumes:
+  qdrant_storage:
