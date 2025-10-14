@@ -3,3 +3,8 @@
 /qdrant-storage
 /venv
 /.env
+/redis_data
+/celerybeat-schedule
+/celerybeat-schedule-shm
+/celerybeat-schedule-wal
+/celery_tasks/__pycache__
