@@ -6,7 +6,7 @@ from models import News
 from database import SessionLocal
 
 # ---------------- Embedding Model ----------------
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer("multi-qa-mpnet-base-dot-v1")
 
 def get_embedding(text: str):
     return model.encode(text).tolist()
@@ -18,7 +18,7 @@ collection_name = "news_articles"
 if not qdrant_client.collection_exists(collection_name):
     qdrant_client.create_collection(
         collection_name=collection_name,
-        vectors_config={"content": VectorParams(size=384, distance="Cosine")}
+        vectors_config={"content": VectorParams(size=768, distance="Cosine")}
     )
 
 # ---------------- Indexleme ----------------

@@ -11,5 +11,14 @@ services:
       - /Users/yigitkagankilic/Desktop/Projects/test-test-test/qdrant-storage:/qdrant/storage
     restart: unless-stopped
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6350:6379"
+    volumes:
+      - /Users/yigitkagankilic/Desktop/Projects/test-test-test/redis_data:/data
+    restart: unless-stopped
+    
 volumes:
   qdrant_storage:
