@@ -13,43 +13,12 @@ from rss_service import fetch_and_store, get_all_rss_feeds_as_json
 
 istanbul_tz = pytz.timezone('Europe/Istanbul')
 
-# def run_periodically(interval: int):
-#     db = SessionLocal()
-#     try:
-#         latest_news = db.query(News).order_by(News.created_date.desc()).first()
-#         now = datetime.now(istanbul_tz)
-
-#         if latest_news:
-#             created = latest_news.created_date
-#             if created.tzinfo is None:
-#                 created = istanbul_tz.localize(created)
-#         else:
-#             created = None
-
-#         if not latest_news or (now - created > timedelta(minutes=15)):
-#             print("Yukarıda ki ifin içinde")
-#             fetch_and_store()
-#         print("While dan önce")
-#         while True:
-#             print("Çalıştı")
-#             fetch_and_store()
-#             print("Bitti")
-#             time.sleep(interval)
-#     except Exception as e:
-#         print(e)
-#         raise e
-#     finally:
-#         db.close()
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
-    # thread = threading.Thread(target=run_periodically, args=(900,), daemon=True)
-    # thread.start()
     yield
 
-app = FastAPI(title="RSS News API with SQLite", lifespan=lifespan)
+app = FastAPI(title="RSS News API with Postgresql and Semantic Search", lifespan=lifespan)
 
 
 @app.get("/")

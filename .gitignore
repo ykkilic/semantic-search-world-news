@@ -8,3 +8,5 @@
 /celerybeat-schedule-shm
 /celerybeat-schedule-wal
 /celery_tasks/__pycache__
+/migration.py
+/news_backup.csv

@@ -3,14 +3,14 @@ from database import Base
 
 class News(Base):
     __tablename__ = "news"
-    id = Column(Integer, primary_key=True, index=True)
-    source = Column(String, index=True)
-    title = Column(String, index=True)
+    id = Column(Integer, primary_key=True)
+    source = Column(String)
+    title = Column(String)
     link = Column(String)
     summary = Column(String)
     content = Column(String)
-    published = Column(DateTime, index=True)
-    created_date= Column(DateTime, index=True)
+    published = Column(DateTime)
+    created_date= Column(DateTime)
 
 class RSSFeed(Base):
     __tablename__ = "rss_feeds"
