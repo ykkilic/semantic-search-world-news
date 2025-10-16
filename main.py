@@ -20,10 +20,12 @@ app = FastAPI(title="RSS News API with Postgresql and Semantic Search", lifespan
 
 
 @app.get("/")
-def get_all_articles(db: Session = Depends(get_db)):
+def get_all_articles(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
 
     articles = (
         db.query(News)
+        .offset(skip)
+        .limit(limit)
         .order_by(News.published.desc())
     )
 
@@ -52,16 +54,17 @@ async def get_article(news_id: int, db: Session = Depends(get_db)):
         return JSONResponse(
             status_code=200,
             content={
-                        "message" : "success", 
-                        "data" : {
-                            "id" : article.id,
-                            "source" : article.source,
-                            "title" : article.title,
-                            "link" : article.link,
-                            "content" : article.content,
-                            "published" : article.published.isoformat() if article.published else None
-                        }
-                    }
+                "message" : "success", 
+                "data" : {
+                    "id" : article.id,
+                    "source" : article.source,
+                    "title" : article.title,
+                    "link" : article.link,
+                    "content" : article.content,
+                    "published" : article.published.isoformat() if article.published else None,
+                    "analyze_results" : article.analyzed_news if article.analyzed_news else None
+                }
+            }
         )
     except Exception as e:
         print(e)
@@ -69,8 +72,6 @@ async def get_article(news_id: int, db: Session = Depends(get_db)):
             status_code=500,
             content={"message" : "Internal Server Error"}
         )
-
-
 
 @app.get("/search")
 def search_articles(q: str = Query(..., description="Aranacak kelime"), db: Session = Depends(get_db)):
@@ -88,7 +89,7 @@ def search_articles(q: str = Query(..., description="Aranacak kelime"), db: Sess
         ]
     }
 
-@app.get("/semantic-search")
+@app.get("/llm/semantic-search")
 async def s_search(q: str = Query(..., description="Aranacak kelime"), db: Session = Depends(get_db)):
     try:
         result = semantic_search(q, top_k=10)
@@ -98,6 +99,26 @@ async def s_search(q: str = Query(..., description="Aranacak kelime"), db: Sessi
         return JSONResponse(
             status_code=500,
             content={"message" : "Internal Server Error"}
+        )
+
+@app.get("/llm/related/{news_id}")
+async def related_news(news_id: int, db: Session = Depends(get_db)):
+    try:
+        current_news = db.query(News).filter(News.id == news_id).first()
+        if current_news is None:
+            return JSONResponse(
+                status_code=404,
+                content={"message" : "News coulnt find"}
+            )
+        result = semantic_search(current_news.content, top_k=5)
+        return result
+    except Exception as e:
+        print(e)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "message" : "Internal Server Error"
+            }
         )
 
 @app.get("/analyze-news/{news_id}")
