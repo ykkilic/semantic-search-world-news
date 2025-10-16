@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, func
+from sqlalchemy import Column, Integer, String, DateTime, JSON, create_engine, func
 from database import Base
 
 class News(Base):
@@ -11,6 +11,7 @@ class News(Base):
     content = Column(String)
     published = Column(DateTime)
     created_date= Column(DateTime)
+    analyzed_news = Column(JSON)
 
 class RSSFeed(Base):
     __tablename__ = "rss_feeds"

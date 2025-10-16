@@ -18,21 +18,6 @@ logging.basicConfig(level=logging.INFO)
 
 istanbul_tz = pytz.timezone('Europe/Istanbul')
 
-# RSS_FEEDS = {
-#     "Yahoo Finance": "https://finance.yahoo.com/news/rssindex",
-#     "Hacker News": "https://news.ycombinator.com/rss",
-#     "Wall Street Journal": "https://feeds.a.dj.com/rss/RSSMarketsMain.xml",
-#     "CNBC": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=15839069",
-#     "bbc": "http://feeds.bbci.co.uk/news/rss.xml",
-#     "guardian": "https://www.theguardian.com/world/rss",
-#     "New York Times" : "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
-#     "Al Jazeera" : "https://www.aljazeera.com/xml/rss/all.xml",
-#     "TechCrunch" : "https://techcrunch.com/feed/",
-#     "Wired" : "https://www.wired.com/feed/rss",
-#     "Ars Technica" : "https://arstechnica.com/feed/",
-#     "Nasa" : "https://www.nasa.gov/rss/dyn/breaking_news.rss"
-# }
-
 def get_all_rss_feeds_as_json() -> List[Dict]:
     """
     Veritabanındaki tüm RSS feed'lerini çekip, 
