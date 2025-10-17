@@ -5,9 +5,10 @@ from sqlalchemy.orm import Session
 import pytz
 from database import get_db, Base, engine
 from models import News
-from qdrant_service import semantic_search
+from qdrant_service import semantic_search, fetch_all_embeddings
 from rss_service import get_all_rss_feeds_as_json
 from llm_service import analyze_news
+from trend_service import TrendClusterAnalyzer, AdvancedKeywordExtractor, OptimizedTrendClusterAnalyzer
 
 istanbul_tz = pytz.timezone('Europe/Istanbul')
 
@@ -135,6 +136,25 @@ async def analyze_news_n(news_id: int, db: Session = Depends(get_db)):
             status_code=500,
             content={"message" : "Internal Server Error"}
         )
+
+# unavailable
+# @app.get("/llm/trends")
+# async def get_trends():
+#     try:
+#         vectors_np, payloads = fetch_all_embeddings()
+#         analyzer = TrendClusterAnalyzer()
+#         _, clusters, _ = analyzer.cluster_with_time_weight(vectors_np, payloads)
+#         extractor = AdvancedKeywordExtractor()
+#         analysis = extractor.extract_cluster_trends(clusters)
+#         return analysis
+#     except Exception as e:
+#         print(e)
+#         return JSONResponse(
+#             status_code=500,
+#             content={"message" : "Internal Server Error"}
+#         )
+    
+
 
 @app.get("/sources")
 def list_sources():

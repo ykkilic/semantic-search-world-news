@@ -19,17 +19,6 @@ logging.basicConfig(level=logging.INFO)
 istanbul_tz = pytz.timezone('Europe/Istanbul')
 
 def get_all_rss_feeds_as_json() -> List[Dict]:
-    """
-    Veritabanındaki tüm RSS feed'lerini çekip, 
-    istenilen formatta bir sözlükler listesi olarak döndürür.
-    
-    Args:
-        db: SQLAlchemy oturum nesnesi.
-
-    Returns:
-        Her bir feed'i temsil eden sözlüklerin listesi.
-        Örnek format: [{"rss_feed_name": "Yahoo Finance", "rss_feed_url": "..."}]
-    """
     db = SessionLocal()
     try:
         feeds = db.execute(

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import VectorParams
-from tqdm import tqdm 
+import numpy as np
 import time
 from models import News
 from database import SessionLocal
@@ -145,3 +145,36 @@ def semantic_search(query: str, top_k: int = 5):
         })
     return results
 
+def fetch_all_embeddings(limit: int = 1000):
+    """
+    Qdrant'tan tüm vektörleri ve payloadları çeker. 
+    limit: scroll ile çekilecek batch boyutu.
+    """
+    vectors = []
+    payloads = []
+    next_page = None
+
+    while True:
+        response = qdrant_client.scroll(
+            collection_name=collection_name,
+            scroll_filter=None,
+            limit=limit,
+            with_vectors=True,
+            with_payload=True,
+            offset=next_page
+        )
+        points, next_page = response  # Qdrant scroll 2-tuple döner: (points, next_page)
+
+        if not points:
+            break
+
+        for p in points:
+            vectors.append(p.vector["content"])
+            payloads.append(p.payload)
+
+        if next_page is None:
+            break
+
+    vectors_np = np.array(vectors, dtype=np.float32)
+    print(f"✅ Fetched {len(vectors_np)} vectors from Qdrant")
+    return vectors_np, payloads
